@@ -34,7 +34,7 @@ git clone https://github.com/amandaLizard/twitch2telegram.git
 2. Создать аккаунт для телеграм бота
 
 
-Мы должны получить строку вроде этой: 5321242921:FAG5RZ1sXsfxj5LmsGdm2N8uRLGp14gqJgz
+Мы должны получить строку вроде этой: `5321242921:FAG5RZ1sXsfxj5LmsGdm2N8uRLGp14gqJgz`
 
 2.1. В телеграмм клиенте, приглашаем бота по имени бота в требуемый телеграмм чат
 
