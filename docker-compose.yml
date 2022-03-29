@@ -1,0 +1,50 @@
+version: '3.7'
+
+x-logging:
+  &default-logging
+  driver: "json-file"
+  options:
+    max-file: "10"
+    max-size: "1M"
+
+x-twitch2telegram-environment:
+  &x-twitch2telegram-environment
+  TELEGRAM_TOKEN: "5321242921:FAG5RZ1sXsfxj5LmsGdm2N8uRLGp14gqJgz"
+  TELEGRAM_CHAT_ID: "-1101273091133"
+
+
+volumes:
+  log:
+
+networks:
+  default:
+    name: twitch2telegram
+    external: true
+
+services:
+  # The Icinga 2 docker image does not support configuration via env vars at the moment.
+  # So, we have to ship some configs with this little init container. Referenced in depends_on of the icinga2 service.
+  irssi:
+    environment: *x-twitch2telegram-environment
+    image: irssi
+    logging: *default-logging
+    stdin_open: true
+    tty: true
+    user: root
+    entrypoint: ["irssi", "--config", "/root/.irssi/config"]
+    ports:
+      - 5665:5665
+    volumes:
+      - ./irssi_config:/root/.irssi/config:rw
+      - /etc/localtime:/etc/localtime:ro
+      - log:/log:rw
+  logstash:
+    image: logstash:8.1.1
+    environment: *x-twitch2telegram-environment
+    logging: *default-logging
+    user: root
+    depends_on:
+      - irssi
+    volumes:
+      - log:/log:ro
+      - ./logstash.conf:/usr/share/logstash/pipeline/logstash.conf
